@@ -45,7 +45,6 @@ public class Move {
         this.mapData = mapData;
     }
 
-
     // 東西南北に指定されたマス数だけ移動するメソッド
     public void moveInDirection(String direction, int steps) {
         Point newLocation = null;
@@ -108,11 +107,19 @@ public class Move {
         return point.x >= 0 && point.x < mapData.getWidth() && point.y >= 0 && point.y < mapData.getHeight();
     }
 
-    // 船を新しい位置に移動するメソッド
     public void moveTo(Point newLocation) {
         if (canMoveTo(newLocation)) {
-            currentLocation = newLocation; // 移動先が有効な場合、現在位置を更新
-            allyShipManager.moveShip(nowshipType, currentLocation); // 修正された呼び出し
+            // 元の位置の船（および敵船）をクリア
+            mapData.clearPreviousShipLocation(nowshipType);
+    
+            // 移動先が有効な場合、現在位置を更新
+            currentLocation = newLocation;
+    
+            // 新しい位置に船を設定
+            mapData.setMap((char) ('A' + newLocation.y), newLocation.x, nowshipType);
+    
+            // AllyShipManagerに位置情報を更新
+            allyShipManager.moveShip(nowshipType, currentLocation);
         }
     }
 
@@ -120,5 +127,5 @@ public class Move {
     public Point getCurrentLocation() {
         return currentLocation;
     }
-    
+
 }

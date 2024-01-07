@@ -103,31 +103,11 @@ public class ShipPlacer {
     private void clearPreviousShipLocation(int shipType) {
         for (int y = 0; y < mapData.getHeight(); y++) {
             for (int x = 0; x < mapData.getWidth(); x++) {
-                int currentType = mapData.getMap((char) ('A' + y), x);
-                if (currentType == shipType) {
+                if (mapData.getMap((char) ('A' + y), x) == shipType) {
                     mapData.setMap((char) ('A' + y), x, MapData.TYPE_SPACE);
-                } else if (isAllyEnemyCombinationType(currentType, shipType)) {
-                    // 味方船と敵船の組み合わせの場合、敵船のみを残す
-                    int enemyShipType = extractEnemyShipTypeFromCombination(currentType);
-                    mapData.setMap((char) ('A' + y), x, enemyShipType);
                 }
             }
         }
-    }
-
-    // 味方船と敵船の組み合わせタイプかどうかを判断するメソッド
-    private boolean isAllyEnemyCombinationType(int mapType, int allyShipType) {
-        if (mapType >= MapData.TYPE_AllyShip_SSN001_Enemy_A && mapType <= MapData.TYPE_AllyShip_SSN004_Enemy_D) {
-            int baseType = (mapType - MapData.TYPE_AllyShip_SSN001_Enemy_A) / 4 + MapData.TYPE_AllyShip_SSN001;
-            return baseType == allyShipType;
-        }
-        return false;
-    }
-
-    // 味方船と敵船の組み合わせタイプから敵船のタイプを抽出するメソッド
-    private int extractEnemyShipTypeFromCombination(int combinationType) {
-        int offset = (combinationType - MapData.TYPE_AllyShip_SSN001_Enemy_A) % 4;
-        return MapData.TYPE_EnemyShip_A + offset;
     }
 
     // 指定された位置に船を配置できるかどうかをチェックするメソッド

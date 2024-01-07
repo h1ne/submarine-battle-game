@@ -47,7 +47,6 @@ public class AllyShipManager {
             }
         }
     }
-    
 
     // 指定されたタイプが味方の船かどうかを判定する
     protected boolean isAllyShip(int type) {
@@ -65,9 +64,20 @@ public class AllyShipManager {
     public void moveShip(int shipType, Point newLocation) {
         if (ships.containsKey(shipType)) {
             Ship ship = ships.get(shipType);
-            // 古い位置のマップタイプを空白に設定
             Point oldLocation = ship.getLocation();
-            mapData.setMap((char) ('A' + oldLocation.y), oldLocation.x, MapData.TYPE_SPACE);
+
+            // 古い位置にあるマップタイプを取得
+            int oldMapType = mapData.getMap((char) ('A' + oldLocation.y), oldLocation.x);
+
+            // 古い位置に敵船が存在するかチェックし、存在する場合はその敵船を残す
+            if (mapData.isAllyEnemyCombinationType(oldMapType, shipType)) {
+                int enemyShipType = mapData.extractEnemyShipTypeFromCombination(oldMapType);
+                // 敵船を新しい位置に移動させる
+                mapData.setMap((char) ('A' + newLocation.y), newLocation.x, enemyShipType);
+            } else {
+                // 敵船が存在しない場合は、古い位置を空白に設定
+                mapData.setMap((char) ('A' + oldLocation.y), oldLocation.x, MapData.TYPE_SPACE);
+            }
 
             // 新しい位置に船を設定
             mapData.setMap((char) ('A' + newLocation.y), newLocation.x, shipType);

@@ -269,7 +269,7 @@ public class MapData {
         return height;
     }
 
-  // 敵船を配置するメソッド
+    // 敵船を配置するメソッド
     public void placeEnemyShip(char row, int col) {
         int currentType = getMap(row, col);
         int newType = determineNewTypeForEnemyShip(currentType);
@@ -286,13 +286,17 @@ public class MapData {
             case TYPE_SPACE:
                 return findNextAvailableEnemyShipType();
             case TYPE_AllyShip_SSN001:
-                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN001_Enemy_A, TYPE_AllyShip_SSN001_Enemy_B, TYPE_AllyShip_SSN001_Enemy_C, TYPE_AllyShip_SSN001_Enemy_D);
+                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN001_Enemy_A, TYPE_AllyShip_SSN001_Enemy_B,
+                        TYPE_AllyShip_SSN001_Enemy_C, TYPE_AllyShip_SSN001_Enemy_D);
             case TYPE_AllyShip_SSN002:
-                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN002_Enemy_A, TYPE_AllyShip_SSN002_Enemy_B, TYPE_AllyShip_SSN002_Enemy_C, TYPE_AllyShip_SSN002_Enemy_D);
+                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN002_Enemy_A, TYPE_AllyShip_SSN002_Enemy_B,
+                        TYPE_AllyShip_SSN002_Enemy_C, TYPE_AllyShip_SSN002_Enemy_D);
             case TYPE_AllyShip_SSN003:
-                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN003_Enemy_A, TYPE_AllyShip_SSN003_Enemy_B, TYPE_AllyShip_SSN003_Enemy_C, TYPE_AllyShip_SSN003_Enemy_D);
+                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN003_Enemy_A, TYPE_AllyShip_SSN003_Enemy_B,
+                        TYPE_AllyShip_SSN003_Enemy_C, TYPE_AllyShip_SSN003_Enemy_D);
             case TYPE_AllyShip_SSN004:
-                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN004_Enemy_A, TYPE_AllyShip_SSN004_Enemy_B, TYPE_AllyShip_SSN004_Enemy_C, TYPE_AllyShip_SSN004_Enemy_D);
+                return findNextAvailableAllyEnemyCombination(TYPE_AllyShip_SSN004_Enemy_A, TYPE_AllyShip_SSN004_Enemy_B,
+                        TYPE_AllyShip_SSN004_Enemy_C, TYPE_AllyShip_SSN004_Enemy_D);
             default:
                 return -1; // 既存の敵船や障害物がある場合は変更しない
         }
@@ -300,10 +304,14 @@ public class MapData {
 
     // 利用可能な次の敵船のタイプを見つけるメソッド
     private int findNextAvailableEnemyShipType() {
-        if (!isTypePresentOnMap(TYPE_EnemyShip_A)) return TYPE_EnemyShip_A;
-        if (!isTypePresentOnMap(TYPE_EnemyShip_B)) return TYPE_EnemyShip_B;
-        if (!isTypePresentOnMap(TYPE_EnemyShip_C)) return TYPE_EnemyShip_C;
-        if (!isTypePresentOnMap(TYPE_EnemyShip_D)) return TYPE_EnemyShip_D;
+        if (!isTypePresentOnMap(TYPE_EnemyShip_A))
+            return TYPE_EnemyShip_A;
+        if (!isTypePresentOnMap(TYPE_EnemyShip_B))
+            return TYPE_EnemyShip_B;
+        if (!isTypePresentOnMap(TYPE_EnemyShip_C))
+            return TYPE_EnemyShip_C;
+        if (!isTypePresentOnMap(TYPE_EnemyShip_D))
+            return TYPE_EnemyShip_D;
         return TYPE_SPACE; // すべての敵船が配置されている場合は空白を返す
     }
 
@@ -328,4 +336,34 @@ public class MapData {
         }
         return TYPE_SPACE; // すべての組み合わせが使用中の場合は空白を返す
     }
+
+    // 船の元の位置を空白に設定するメソッド
+    public void clearPreviousShipLocation(int shipType) {
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                int currentType = getMap((char) ('A' + y), x);
+                if (currentType == shipType) {
+                    setMap((char) ('A' + y), x, MapData.TYPE_SPACE);
+                } else if (isAllyEnemyCombinationType(currentType, shipType)) {
+                    // 味方船と敵船の組み合わせの場合、敵船のみを残す
+                    int enemyShipType = extractEnemyShipTypeFromCombination(currentType);
+                    setMap((char) ('A' + y), x, enemyShipType);
+                }
+            }
+        }
+    }
+
+    // 味方船と敵船の組み合わせタイプかどうかを判断するメソッド
+    public boolean isAllyEnemyCombinationType(int mapType, int allyShipType) {
+        return mapType >= MapData.TYPE_AllyShip_SSN001_Enemy_A && mapType <= MapData.TYPE_AllyShip_SSN004_Enemy_D
+                && ((mapType - MapData.TYPE_AllyShip_SSN001_Enemy_A) / 4
+                        + MapData.TYPE_AllyShip_SSN001) == allyShipType;
+    }
+
+    // 味方船と敵船の組み合わせタイプから敵船のタイプを抽出するメソッド
+    public int extractEnemyShipTypeFromCombination(int combinationType) {
+        int offset = (combinationType - MapData.TYPE_AllyShip_SSN001_Enemy_A) % 4;
+        return MapData.TYPE_EnemyShip_A + offset;
+    }
+
 }
