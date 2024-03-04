@@ -77,6 +77,34 @@ public class MapData {
         return maps[rowIndex][col];
     }
 
+    public int getAllyMap(char row, int col) {
+        int rowIndex = row - 'A'; // アルファベットを数値インデックスに変換
+        int result = 0;
+        if (rowIndex < 0 || height <= rowIndex || col < 0 || width <= col) {
+            return -1;
+        }
+        if (maps[rowIndex][col] == 0) {
+            result = 0;
+        }
+        if (maps[rowIndex][col] == 1 || maps[rowIndex][col] == 10 || maps[rowIndex][col] == 11
+                || maps[rowIndex][col] == 12 || maps[rowIndex][col] == 13) {
+            result = 1;
+        }
+        if (maps[rowIndex][col] == 2 || maps[rowIndex][col] == 14 || maps[rowIndex][col] == 15
+                || maps[rowIndex][col] == 16 || maps[rowIndex][col] == 17) {
+            result = 2;
+        }
+        if (maps[rowIndex][col] == 3 || maps[rowIndex][col] == 18 || maps[rowIndex][col] == 19
+                || maps[rowIndex][col] == 20 || maps[rowIndex][col] == 21) {
+            result = 3;
+        }
+        if (maps[rowIndex][col] == 4 || maps[rowIndex][col] == 22 || maps[rowIndex][col] == 23
+                || maps[rowIndex][col] == 24 || maps[rowIndex][col] == 25) {
+            result = 4;
+        }
+        return result;
+    }
+
     // getMapで得た番号をGUI用に変換するメゾット
     public static String getMapExportString(int type) {
         switch (type) {
@@ -144,6 +172,7 @@ public class MapData {
             return;
         }
         maps[rowIndex][col] = type;
+        // saveCurrentMap(maps[rowIndex][col]);
     }
 
     // マップの内容をターミナルに表示するメソッド
@@ -155,6 +184,12 @@ public class MapData {
             writeLog(String.valueOf(i + 1) + " ");
         }
         writeLogLine("");
+
+        System.out.print("  ───");
+        for (int x = 0; x < 3; x++) {
+            System.out.print("──");
+        }
+        System.out.println();
 
         // マップの内容を表示
         for (int y = 0; y < height; y++) {
@@ -354,14 +389,16 @@ public class MapData {
     }
 
     // 味方船と敵船の組み合わせタイプかどうかを判断するメソッド
-    public boolean isAllyEnemyCombinationType(int mapType, int allyShipType) {
-        return mapType >= MapData.TYPE_AllyShip_SSN001_Enemy_A && mapType <= MapData.TYPE_AllyShip_SSN004_Enemy_D
-                && ((mapType - MapData.TYPE_AllyShip_SSN001_Enemy_A) / 4
-                        + MapData.TYPE_AllyShip_SSN001) == allyShipType;
+    private boolean isAllyEnemyCombinationType(int mapType, int allyShipType) {
+        if (mapType >= MapData.TYPE_AllyShip_SSN001_Enemy_A && mapType <= MapData.TYPE_AllyShip_SSN004_Enemy_D) {
+            int baseType = (mapType - MapData.TYPE_AllyShip_SSN001_Enemy_A) / 4 + MapData.TYPE_AllyShip_SSN001;
+            return baseType == allyShipType;
+        }
+        return false;
     }
 
     // 味方船と敵船の組み合わせタイプから敵船のタイプを抽出するメソッド
-    public int extractEnemyShipTypeFromCombination(int combinationType) {
+    private int extractEnemyShipTypeFromCombination(int combinationType) {
         int offset = (combinationType - MapData.TYPE_AllyShip_SSN001_Enemy_A) % 4;
         return MapData.TYPE_EnemyShip_A + offset;
     }

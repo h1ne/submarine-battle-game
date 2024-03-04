@@ -27,6 +27,7 @@ public class Move {
     private MapData mapData; // マップデータへの参照
     private AllyShipManager allyShipManager;
     int nowshipType;
+    public static boolean isMoved;
 
     // コンストラクタを修正
     public Move(int shipType, AllyShipManager allyShipManager, MapData mapData) {
@@ -48,6 +49,7 @@ public class Move {
     // 東西南北に指定されたマス数だけ移動するメソッド
     public void moveInDirection(String direction, int steps) {
         Point newLocation = null;
+        isMoved = false;
 
         switch (direction.trim()) {
             // case "東":
@@ -73,10 +75,12 @@ public class Move {
 
         if (canMoveTo(newLocation) == true) {
             moveTo(newLocation);
+            isMoved = true;
             System.out.println(newLocation);
         } else {
             System.out.println("移動できません。");
             System.out.println(newLocation);
+            isMoved = false;
         }
     }
 

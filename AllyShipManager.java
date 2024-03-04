@@ -47,6 +47,7 @@ public class AllyShipManager {
             }
         }
     }
+    
 
     // 指定されたタイプが味方の船かどうかを判定する
     protected boolean isAllyShip(int type) {
@@ -64,20 +65,9 @@ public class AllyShipManager {
     public void moveShip(int shipType, Point newLocation) {
         if (ships.containsKey(shipType)) {
             Ship ship = ships.get(shipType);
+            // 古い位置のマップタイプを空白に設定
             Point oldLocation = ship.getLocation();
-
-            // 古い位置にあるマップタイプを取得
-            int oldMapType = mapData.getMap((char) ('A' + oldLocation.y), oldLocation.x);
-
-            // 古い位置に敵船が存在するかチェックし、存在する場合はその敵船を残す
-            if (mapData.isAllyEnemyCombinationType(oldMapType, shipType)) {
-                int enemyShipType = mapData.extractEnemyShipTypeFromCombination(oldMapType);
-                // 敵船を新しい位置に移動させる
-                mapData.setMap((char) ('A' + newLocation.y), newLocation.x, enemyShipType);
-            } else {
-                // 敵船が存在しない場合は、古い位置を空白に設定
-                mapData.setMap((char) ('A' + oldLocation.y), oldLocation.x, MapData.TYPE_SPACE);
-            }
+            mapData.setMap((char) ('A' + oldLocation.y), oldLocation.x, MapData.TYPE_SPACE);
 
             // 新しい位置に船を設定
             mapData.setMap((char) ('A' + newLocation.y), newLocation.x, shipType);
@@ -94,6 +84,14 @@ public class AllyShipManager {
     public int getShipHp(int shipType) {
         Ship ship = ships.get(shipType);
         return ship != null ? ship.getHp() : -1; // 船が存在しない場合は-1を返す
+    }
+
+    // 特定の船のHPを設定するメソッド(Undoのために後から作成)
+    public void setShipHp(int shipType, int newHp) {
+        if (ships.containsKey(shipType)) {
+            Ship ship = ships.get(shipType);
+            ship.setHp(newHp); // 船オブジェクトのHPを更新
+        }
     }
 
     // すべての味方船のHPを表示するメソッド

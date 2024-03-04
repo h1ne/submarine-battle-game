@@ -13,7 +13,7 @@ class Input {
         return x;
     }
 
-    public static String strValue() {
+    public static String strInput() {
         String x = GetValue.getStr();
         Confirmation(x);
         return x;
@@ -57,7 +57,7 @@ class GetValue {
     }
 
     public static String getStr() {
-        String i = sc.nextLine();
+        String i = sc.next();
         return i;
     }
 }
