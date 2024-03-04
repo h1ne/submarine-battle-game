@@ -2,8 +2,8 @@ class Undo {
     public static MapData mapData;
     public static AllyShipManager allyShipManager;
     Undo(AllyShipManager allyShipManager, MapData mapData) {
-                this.allyShipManager = allyShipManager;
-                this.mapData = mapData;
+        this.allyShipManager = allyShipManager;
+        this.mapData = mapData;
     }
 
     public static void undoToPastRound() {
