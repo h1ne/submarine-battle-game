@@ -4,7 +4,7 @@ class Undo {
     Undo(AllyShipManager allyShipManager, MapData mapData) {
                 this.allyShipManager = allyShipManager;
                 this.mapData = mapData;
-            }
+    }
 
     public static void undoToPastRound() {
         System.out.print("何ターン目まで戻りますか？: ");
